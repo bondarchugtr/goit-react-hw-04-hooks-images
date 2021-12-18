@@ -1,0 +1,14 @@
+.gallery__img {
+  width: 100%;
+  transition: all 0.5s ease-out;
+  cursor: pointer;
+}
+
+.gallery__img:last-child {
+  margin-bottom: 0;
+}
+
+.gallery__img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 10px 5px rgb(197, 193, 191);
+}
