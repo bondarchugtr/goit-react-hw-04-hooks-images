@@ -1,22 +1,19 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import "modern-normalize/modern-normalize.css";
 import ImageGallery from "./component/ImageGallery/ImageGallery";
 import Search from "./component/Searchbar/Searchbar";
-class App extends Component {
-  state = {
-    imgName: "",
+function App() {
+  const [imgName, setImgName] = useState("");
+  const handleFormSubmit = (imgName) => {
+    setImgName(imgName);
   };
-  handleFormSubmit = (imgName) => {
-    this.setState({ imgName });
-  };
-  render() {
-    return (
-      <>
-        <Search img={this.handleFormSubmit} />
-        <ImageGallery imgName={this.state.imgName} />
-      </>
-    );
-  }
+
+  return (
+    <>
+      <Search img={handleFormSubmit} />
+      <ImageGallery imgName={imgName} />
+    </>
+  );
 }
 
 export default App;
