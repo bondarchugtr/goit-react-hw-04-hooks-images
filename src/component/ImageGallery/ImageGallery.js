@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 import s from "./ImageGallery.module.css";
 import container from "../Container.module.css";
@@ -7,58 +7,66 @@ import Button from "../Button/Button";
 import ThreeDots from "../Loader/Loader";
 import Modal from "../Modal/Modal";
 
-class ImageGallery extends Component {
-  state = {
-    imgArr: [],
-    page: 1,
-    loading: false,
-    isOpen: false,
-    largeImageURL: null,
+function ImageGallery({ imgName, onClick }) {
+  const [imgArr, setImgArr] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [largeImageURL, setLargeImageURL] = useState(null);
+
+  useEffect(
+    (prevProps, prevState) => {
+      if (prevProps.imgName !== imgName || prevState.page !== page) {
+        setLoading(true);
+        Api(imgName, page)
+          .then((imgArr) => setImgArr([...imgArr, ...imgArr.hits]))
+          .finally(() => setLoading(false));
+      }
+      if (prevProps.imgName !== imgName) {
+        clearOnNewRequest();
+      }
+    },
+    [imgName, page]
+  );
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { page } = this.state;
+  //   const { imgName } = this.props;
+  //   if (prevProps.imgName !== imgName || prevState.page !== page) {
+  //     this.setState({ loading: true });
+  //     Api(this.props.imgName, this.state.page)
+  //       .then((imgArr) =>
+  //         this.setState({
+  //           imgArr: [...this.state.imgArr, ...imgArr.hits],
+  //         })
+  //       )
+  //       .finally(() => this.setState({ loading: false }));
+  //   }
+  //   if (prevProps.imgName !== imgName) {
+  //     this.clearOnNewRequest();
+  //   }
+  // }
+  const clearOnNewRequest = () => {
+    setPage(1);
+    setImgArr([]);
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { page } = this.state;
-    const { imgName } = this.props;
-    if (prevProps.imgName !== imgName || prevState.page !== page) {
-      this.setState({ loading: true });
-      Api(this.props.imgName, this.state.page)
-        .then((imgArr) =>
-          this.setState({
-            imgArr: [...this.state.imgArr, ...imgArr.hits],
-          })
-        )
-        .finally(() => this.setState({ loading: false }));
-    }
-    if (prevProps.imgName !== imgName) {
-      this.clearOnNewRequest();
-    }
-  }
-  clearOnNewRequest = () => {
-    this.setState({
-      page: 1,
-      imgArr: [],
-    });
+  const buttonOnclickNextPage = () => {
+    setPage((page) => page + 1);
+
+    scrollTop();
   };
 
-  buttonOnclickNextPage = () => {
-    const { page } = this.state;
-    this.setState({ page: page + 1 });
-
-    this.scrollTop();
+  const onClickImgToggleModal = () => {
+    setIsOpen((isOpen) => !isOpen);
   };
 
-  onClickImgToggleModal = () => {
-    this.setState(({ isOpen }) => ({
-      isOpen: !isOpen,
-    }));
+  const imgModalWriting = (largeImageURL) => {
+    onClickImgToggleModal();
+    setLargeImageURL(largeImageURL);
   };
 
-  imgModalWriting = (largeImageURL) => {
-    this.onClickImgToggleModal();
-    this.setState({ largeImageURL: largeImageURL });
-  };
-
-  scrollTop = () => {
+  const scrollTop = () => {
     setTimeout(
       () =>
         window.scrollTo({
@@ -70,39 +78,37 @@ class ImageGallery extends Component {
     );
   };
 
-  render() {
-    const { imgArr, isOpen, largeImageURL, loading } = this.state;
+  // const { imgArr, isOpen, largeImageURL, loading } = this.state;
 
-    return (
-      <>
-        <div className={container.container}>
-          {imgArr.length > 0 && (
-            <ul className={s.gallery}>
-              {imgArr.map((img) => (
-                <ImageGalleryItem
-                  key={img.id}
-                  src={img.webformatURL}
-                  alt={img.tags}
-                  onClick={() => this.imgModalWriting(img.largeImageURL)}
-                />
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {imgArr.length > 0 && !loading && (
-          <Button nextPage={this.buttonOnclickNextPage} />
+  return (
+    <>
+      <div className={container.container}>
+        {imgArr.length > 0 && (
+          <ul className={s.gallery}>
+            {imgArr.map((img) => (
+              <ImageGalleryItem
+                key={img.id}
+                src={img.webformatURL}
+                alt={img.tags}
+                onClick={() => imgModalWriting(img.largeImageURL)}
+              />
+            ))}
+          </ul>
         )}
-        {loading && <ThreeDots />}
+      </div>
 
-        {isOpen && (
-          <Modal
-            onClose={this.onClickImgToggleModal}
-            openImgModal={largeImageURL}
-          />
-        )}
-      </>
-    );
-  }
+      {imgArr.length > 0 && !loading && (
+        <Button nextPage={buttonOnclickNextPage} />
+      )}
+      {loading && <ThreeDots />}
+
+      {isOpen && (
+        <Modal
+          onClose={this.onClickImgToggleModal}
+          openImgModal={largeImageURL}
+        />
+      )}
+    </>
+  );
 }
 export default ImageGallery;

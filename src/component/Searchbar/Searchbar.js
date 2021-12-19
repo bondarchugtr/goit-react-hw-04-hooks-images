@@ -39,5 +39,4 @@ function Search({ img }) {
     </>
   );
 }
-
 export default Search;
