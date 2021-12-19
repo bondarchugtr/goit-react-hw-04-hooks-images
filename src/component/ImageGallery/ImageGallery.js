@@ -7,25 +7,23 @@ import Button from "../Button/Button";
 import ThreeDots from "../Loader/Loader";
 import Modal from "../Modal/Modal";
 
-function ImageGallery({ imgName, onClick }) {
+function ImageGallery({ imgName }) {
   const [imgArr, setImgArr] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState(null);
-
   useEffect(() => {
     if (!imgName) {
       return;
     }
-
-    if (imgName !== imgName || page !== page) {
+    if (imgName) {
       setLoading(true);
       Api(imgName, page)
         .then((imgArr) => setImgArr([...imgArr, ...imgArr.hits]))
         .finally(() => setLoading(false));
     }
-    if (imgName !== imgName) {
+    if (!imgName) {
       clearOnNewRequest();
     }
   }, [imgName, page]);
