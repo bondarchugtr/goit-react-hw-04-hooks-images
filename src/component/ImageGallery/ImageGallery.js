@@ -14,20 +14,21 @@ function ImageGallery({ imgName, onClick }) {
   const [isOpen, setIsOpen] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState(null);
 
-  useEffect(
-    (prevProps, prevState) => {
-      if (prevProps.imgName !== imgName || prevState.page !== page) {
-        setLoading(true);
-        Api(imgName, page)
-          .then((imgArr) => setImgArr([...imgArr, ...imgArr.hits]))
-          .finally(() => setLoading(false));
-      }
-      if (prevProps.imgName !== imgName) {
-        clearOnNewRequest();
-      }
-    },
-    [imgName, page]
-  );
+  useEffect(() => {
+    if (!imgName) {
+      return;
+    }
+
+    if (imgName !== imgName || page !== page) {
+      setLoading(true);
+      Api(imgName, page)
+        .then((imgArr) => setImgArr([...imgArr, ...imgArr.hits]))
+        .finally(() => setLoading(false));
+    }
+    if (imgName !== imgName) {
+      clearOnNewRequest();
+    }
+  }, [imgName, page]);
 
   // componentDidUpdate(prevProps, prevState) {
   //   const { page } = this.state;
