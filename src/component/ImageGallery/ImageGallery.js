@@ -19,13 +19,14 @@ function ImageGallery({ imgName }) {
     if (!imgName) {
       return;
     }
-    if (imgName !== currentName) clearOnNewRequest();
+
     if (imgName) {
       setLoading(true);
       Api(imgName, page)
         .then((data) => setImgArr([...imgArr, ...data.hits]))
         .finally(() => setLoading(false));
     }
+    if (imgName !== currentName) clearOnNewRequest();
   }, [imgName, page, currentName]);
 
   const clearOnNewRequest = () => {
