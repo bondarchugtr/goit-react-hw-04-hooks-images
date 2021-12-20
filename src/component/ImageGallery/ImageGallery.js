@@ -6,7 +6,6 @@ import Api from "../ApiService/ApiService";
 import Button from "../Button/Button";
 import ThreeDots from "../Loader/Loader";
 import Modal from "../Modal/Modal";
-
 function ImageGallery({ imgName }) {
   const [imgArr, setImgArr] = useState([]);
   const [page, setPage] = useState(1);
@@ -20,34 +19,17 @@ function ImageGallery({ imgName }) {
     if (imgName) {
       setLoading(true);
       Api(imgName, page)
-        .then((imgArr) => setImgArr([...imgArr, ...imgArr.hits]))
+        .then((data) => setImgArr([...imgArr, ...data.hits]))
         .finally(() => setLoading(false));
-    }
-    if (!imgName) {
+    } else {
+      console.log("object");
       clearOnNewRequest();
     }
   }, [imgName, page]);
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const { page } = this.state;
-  //   const { imgName } = this.props;
-  //   if (prevProps.imgName !== imgName || prevState.page !== page) {
-  //     this.setState({ loading: true });
-  //     Api(this.props.imgName, this.state.page)
-  //       .then((imgArr) =>
-  //         this.setState({
-  //           imgArr: [...this.state.imgArr, ...imgArr.hits],
-  //         })
-  //       )
-  //       .finally(() => this.setState({ loading: false }));
-  //   }
-  //   if (prevProps.imgName !== imgName) {
-  //     this.clearOnNewRequest();
-  //   }
-  // }
   const clearOnNewRequest = () => {
     setPage(1);
-    setImgArr([]);
+    setPage([]);
   };
 
   const buttonOnclickNextPage = () => {
@@ -77,8 +59,6 @@ function ImageGallery({ imgName }) {
     );
   };
 
-  // const { imgArr, isOpen, largeImageURL, loading } = this.state;
-
   return (
     <>
       <div className={container.container}>
@@ -102,10 +82,7 @@ function ImageGallery({ imgName }) {
       {loading && <ThreeDots />}
 
       {isOpen && (
-        <Modal
-          onClose={this.onClickImgToggleModal}
-          openImgModal={largeImageURL}
-        />
+        <Modal onClose={onClickImgToggleModal} openImgModal={largeImageURL} />
       )}
     </>
   );
