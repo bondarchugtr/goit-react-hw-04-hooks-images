@@ -6,30 +6,31 @@ import Api from "../ApiService/ApiService";
 import Button from "../Button/Button";
 import ThreeDots from "../Loader/Loader";
 import Modal from "../Modal/Modal";
+
 function ImageGallery({ imgName }) {
   const [imgArr, setImgArr] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState(null);
+  const [test, setTest] = useState(false);
   useEffect(() => {
     if (!imgName) {
       return;
     }
-    if (imgName) {
+    if (imgName || test) {
       setLoading(true);
       Api(imgName, page)
         .then((data) => setImgArr([...imgArr, ...data.hits]))
         .finally(() => setLoading(false));
-    } else {
-      console.log("object");
-      clearOnNewRequest();
+      setTest(true);
     }
   }, [imgName, page]);
 
   const clearOnNewRequest = () => {
+    setImgArr([]);
     setPage(1);
-    setPage([]);
+    console.log(page);
   };
 
   const buttonOnclickNextPage = () => {

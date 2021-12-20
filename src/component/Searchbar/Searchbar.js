@@ -15,6 +15,7 @@ function Search({ img }) {
     }
     img(imgName);
     setImgName("");
+    console.log("object");
   };
 
   return (
